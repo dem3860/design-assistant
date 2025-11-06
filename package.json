@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "mastra:dev": "mastra dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -11,12 +12,17 @@
   "dependencies": {
     "@ai-sdk/google": "2.0.28",
     "@ai-sdk/openai": "2.0.45",
+    "@libsql/client": "^0.15.15",
     "@mastra/core": "0.23.3",
     "@mastra/libsql": "0.16.1",
+    "@mastra/loggers": "^0.10.19",
+    "@mastra/memory": "^0.15.11",
+    "libsql": "^0.5.22",
     "mastra": "0.17.7",
     "next": "16.0.1",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-dom": "19.2.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

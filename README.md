@@ -1,36 +1,163 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+````markdown
+# Design Assistant
 
-## Getting Started
+Mastra と Next.js を使用した設計お助けエージェントです。データベース設計、アーキテクチャ設計、API 設計などを AI がサポートします。
 
-First, run the development server:
+## 機能
+
+### 対応している設計タイプ
+
+1. **データベース設計** (`database`)
+
+   - ER 図の生成(Mermaid 記法)
+   - テーブル定義(SQL DDL)
+   - インデックス設計の提案
+
+2. **アーキテクチャ設計** (`architecture`)
+
+   - システム構成図(Mermaid 記法)
+   - 技術スタックの提案
+   - 設計ドキュメント(Markdown)
+
+3. **API 設計** (`api`)
+
+   - REST API エンドポイント定義
+   - OpenAPI 仕様書
+   - API 設計ドキュメント
+
+4. **UI/UX 設計** (`ui`)
+
+   - 画面遷移図(Mermaid 記法)
+   - コンポーネント構成
+   - デザインガイドライン
+
+5. **システム設計全般** (`system`)
+   - 要件に応じた総合的な設計提案
+
+## セットアップ
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# 依存関係のインストール
+pnpm install
+
+# 開発サーバーの起動
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+環境変数の設定:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# .env.local
+GOOGLE_GENERATIVE_AI_API_KEY=your_api_key_here
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 使い方
 
-## Learn More
+### API 経由で使用
 
-To learn more about Next.js, take a look at the following resources:
+#### GET リクエスト例
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+curl http://localhost:3000/api/test-mastra
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+サンプルの DB 設計を取得できます。
 
-## Deploy on Vercel
+#### POST リクエスト例
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**データベース設計:**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+curl -X POST http://localhost:3000/api/test-mastra \
+  -H "Content-Type: application/json" \
+  -d '{
+    "designType": "database",
+    "requirements": "ECサイトのユーザー、商品、注文を管理するシステム"
+  }'
+```
+
+**アーキテクチャ設計:**
+
+```bash
+curl -X POST http://localhost:3000/api/test-mastra \
+  -H "Content-Type: application/json" \
+  -d '{
+    "designType": "architecture",
+    "requirements": "リアルタイムチャットアプリケーション、1万人同時接続対応"
+  }'
+```
+
+**API 設計:**
+
+```bash
+curl -X POST http://localhost:3000/api/test-mastra \
+  -H "Content-Type: application/json" \
+  -d '{
+    "designType": "api",
+    "requirements": "タスク管理アプリのREST API"
+  }'
+```
+
+**UI 設計:**
+
+```bash
+curl -X POST http://localhost:3000/api/test-mastra \
+  -H "Content-Type: application/json" \
+  -d '{
+    "designType": "ui",
+    "requirements": "社内管理画面、ダッシュボード中心"
+  }'
+```
+
+### レスポンス形式
+
+```json
+{
+  "designType": "database",
+  "text": "生成された設計内容(Mermaid図、Markdown、SQLなど)",
+  "timestamp": "2025-11-06T12:00:00.000Z"
+}
+```
+
+## プロジェクト構造
+
+```
+src/mastra/
+├── index.ts                 # Mastra設定
+├── agents/
+│   └── design-assistant-agent.ts  # 設計アシスタントエージェント
+├── models/
+│   └── index.ts             # LLMモデル設定
+└── tools/
+    └── design-assistant-tool.ts   # 設計ツール定義
+        ├── databaseDesignTool     # DB設計ツール
+        ├── architectureDesignTool # アーキテクチャ設計ツール
+        ├── apiDesignTool          # API設計ツール
+        ├── uiDesignTool          # UI設計ツール
+        └── designAssistantTool    # 統合設計ツール
+
+app/api/
+└── test-mastra/
+    └── route.ts             # APIエンドポイント
+```
+
+## 技術スタック
+
+- **フレームワーク**: Next.js 15
+- **AI フレームワーク**: Mastra
+- **LLM**: Google Gemini 2.0 Flash
+- **言語**: TypeScript
+- **パッケージマネージャー**: pnpm
+
+## 次のステップ
+
+- [ ] フロントエンド UI の実装
+- [ ] Mermaid 図のプレビュー機能
+- [ ] 設計履歴の保存機能
+- [ ] エクスポート機能(PDF、Markdown)
+- [ ] より詳細な設計オプション
+
+## License
+
+MIT
+````
