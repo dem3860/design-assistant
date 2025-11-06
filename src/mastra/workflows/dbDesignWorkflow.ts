@@ -2,11 +2,11 @@ import { createWorkflow, createStep } from "@mastra/core";
 import { z } from "zod";
 import { designAssistantAgent } from "../agents/designAssistantAgent";
 import { formatDbMarkdownTool } from "../tools/formatDbMarkdownTool";
+import { formatErDiagramTool } from "../tools/formatErDiagramTool";
 
-// Step 2: Markdown整形ツールをステップ化
 const formatDbMarkdownStep = createStep(formatDbMarkdownTool);
+const formatErDiagramStep = createStep(formatErDiagramTool);
 
-// Step 1: LLMにDB設計を生成させるステップ
 const generateDbDesignStep = createStep({
   id: "generateDbDesign",
   inputSchema: z.object({
@@ -51,9 +51,63 @@ export const dbDesignWorkflow = createWorkflow({
       .describe("設計対象の要件（例：ユーザーと注文管理）"),
   }),
   outputSchema: z.object({
-    schemaMarkdown: z.string(),
+    erDiagram: z.string().describe("生成されたER図(Mermaid形式)"),
+    schemaMarkdown: z.string().describe("テーブル定義(Markdown形式)"),
   }),
 })
   .then(generateDbDesignStep)
   .then(formatDbMarkdownStep)
+  .then(
+    createStep({
+      id: "generate-er-diagram",
+      inputSchema: z.object({ schemaMarkdown: z.string() }),
+      outputSchema: z.object({
+        rawErText: z.string(),
+        schemaMarkdown: z.string(),
+      }),
+      execute: async ({ inputData }) => {
+        const prompt = `
+あなたはソフトウェア設計の専門家です。
+以下のMarkdownテーブル定義をもとに、Mermaid形式のER図を正確に生成してください。
+
+🚨 **厳守すべきルール**
+1. 出力は \\\`\\\`\\\`mermaid から始まり \\\`\\\`\\\` で終わる完全なコードブロックにする
+2. 各テーブル間は必ず1行以上の空行を挿入する
+3. 型定義には **括弧()やカンマ(,)** を使わない（例: DECIMAL(10,2) → DECIMAL）
+4. VARCHAR(255) のような型は **VARCHAR** のみに省略
+5. 外部キーはリレーション記号で正確に記述する
+6. 出力には **余分な説明文やコメントを一切含めない**
+7. Mermaid構文エラーを起こさないよう構文を厳密に確認する
+
+✅ 正しい例：
+\\\`\\\`\\\`mermaid
+erDiagram
+    users {
+        INT id PK
+        VARCHAR name
+        VARCHAR email
+    }
+
+    orders {
+        INT id PK
+        INT user_id FK
+        DECIMAL total
+    }
+
+    users ||--o{ orders : places
+\\\`\\\`\\\`
+
+Markdownテーブル定義:
+${inputData.schemaMarkdown}
+`;
+
+        const res = await designAssistantAgent.generate(prompt);
+        return {
+          rawErText: res.text,
+          schemaMarkdown: inputData.schemaMarkdown,
+        };
+      },
+    })
+  )
+  .then(formatErDiagramStep)
   .commit();

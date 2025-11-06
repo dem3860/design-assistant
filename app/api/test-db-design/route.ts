@@ -1,3 +1,4 @@
+// src/app/api/test-db-design/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { mastra } from "@/src/mastra";
 
@@ -5,7 +6,7 @@ interface DbDesignInput {
   requirement: string;
 }
 
-export async function POST(request: NextRequest): Promise<NextResponse> {
+export async function POST(request: NextRequest) {
   try {
     const body: DbDesignInput = await request.json();
 
@@ -24,15 +25,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // ワークフロー実行
     const run = await workflow.createRunAsync();
     const result = await run.start({
       inputData: { requirement: body.requirement },
     });
 
-    // 成功時
     if (result.status === "success") {
-      const { schemaMarkdown } = result.result;
+      const { erDiagram, schemaMarkdown } = result.result;
+      console.log(erDiagram);
+
       const stepSummaries = Object.entries(result.steps ?? {}).map(
         ([stepId, step]) => ({
           stepId,
@@ -44,14 +45,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({
         success: true,
         message: "DB設計ワークフローが正常に完了しました。",
+        erDiagram,
         schemaMarkdown,
         steps: stepSummaries,
       });
     }
 
-    // エラー時
     const errorMessage =
-      "error" in result && result.error.message
+      "error" in result && result.error?.message
         ? result.error.message
         : "ワークフロー実行中に不明なエラーが発生しました。";
 
