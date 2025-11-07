@@ -11,10 +11,13 @@ interface Message {
 
 interface ChatMessageProps {
   message: Message;
-  //   onShowDiagram: (diagram: string, markdown?: string) => void;
+  onShowDiagram: (diagram: string, markdown?: string) => void;
 }
 
-export default function ChatMessage({ message }: ChatMessageProps) {
+export default function ChatMessage({
+  message,
+  onShowDiagram,
+}: ChatMessageProps) {
   return (
     <div
       className={`flex ${
@@ -36,6 +39,17 @@ export default function ChatMessage({ message }: ChatMessageProps) {
             <pre className="whitespace-pre-wrap text-sm font-sans">
               {message.content}
             </pre>
+            {/* ER図があれば表示ボタンを追加 */}
+            {message.mermaidDiagram && (
+              <button
+                onClick={() =>
+                  onShowDiagram(message.mermaidDiagram!, message.schemaMarkdown)
+                }
+                className="mt-2 px-3 py-1 text-xs bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+              >
+                📊 図を表示
+              </button>
+            )}
           </div>
         </div>
         <div className="text-xs opacity-70 mt-1 text-right">

@@ -18,6 +18,11 @@ export default function Home() {
     return match ? match[1].trim() : null;
   };
 
+  const handleShowDiagram = (diagram: string, markdown?: string) => {
+    setSelectedDiagram(diagram);
+    setSelectedMarkdown(markdown || null);
+  };
+
   const handleSubmit = async () => {
     if (!input.trim() || loading) return;
 
@@ -151,7 +156,11 @@ export default function Home() {
                 </div>
               ) : (
                 messages.map((message) => (
-                  <ChatMessage key={message.id} message={message} />
+                  <ChatMessage
+                    key={message.id}
+                    message={message}
+                    onShowDiagram={handleShowDiagram}
+                  />
                 ))
               )}
 
@@ -195,11 +204,11 @@ export default function Home() {
           <div className="flex flex-col bg-white dark:bg-white rounded-2xl shadow-xl overflow-hidden">
             <div className="p-4 border-b border-gray-200">
               <h2 className="text-xl font-bold text-gray-800">
-                📊 ER図プレビュー
+                📊 設計プレビュー
               </h2>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 bg-white">
+            <div className="flex-1 overflow-hidden p-4 bg-white">
               <DiagramPreview
                 diagram={selectedDiagram}
                 markdown={selectedMarkdown}
