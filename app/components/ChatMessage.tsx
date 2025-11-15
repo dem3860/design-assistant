@@ -37,7 +37,7 @@ export default function ChatMessage({
           </span>
           <div className="flex-1">
             <pre className="whitespace-pre-wrap text-sm font-sans">
-              {message.content}
+              {message.schemaMarkdown}
             </pre>
             {/* ER図があれば表示ボタンを追加 */}
             {message.mermaidDiagram && (
