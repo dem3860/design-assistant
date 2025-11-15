@@ -9,9 +9,6 @@ export const designAssistantAgent = new Agent({
 
 サポート対象:
 1. **データベース設計** — ER図(Mermaid)とSQL DDLを生成
-2. **アーキテクチャ設計** — システム構成図とMarkdownドキュメントを生成
-3. **API設計** — OpenAPI仕様とエンドポイント定義を生成
-4. **UI/UX設計** — 画面遷移図とコンポーネント構成を生成
 
 出力方針:
 - 構造的かつ視覚的にわかりやすい設計ドキュメントを生成
