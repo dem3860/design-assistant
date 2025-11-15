@@ -60,7 +60,7 @@ GOOGLE_GENERATIVE_AI_API_KEY=your_api_key_here
 **データベース設計 API:**
 
 ```bash
-curl -X POST http://localhost:3000/api/test-db-design \
+curl -X POST http://localhost:3000/api/db-design \
   -H "Content-Type: application/json" \
   -d '{
     "requirement": "ユーザーが商品を購入できるECサイト。ユーザー、商品、注文の3つのテーブルを想定"
@@ -91,7 +91,7 @@ app/
 │   ├── MermaidDiagram.tsx           # Mermaid図レンダリング
 │   └── MarkdownRenderer.tsx         # Markdownレンダリング
 └── api/
-    └── test-db-design/
+    └── db-design/
         └── route.ts                 # DB設計APIエンドポイント
 
 src/mastra/

@@ -1,4 +1,4 @@
-// src/app/api/test-db-design/route.ts
+// src/app/api/db-design/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { mastra } from "@/src/mastra";
 

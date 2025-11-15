@@ -39,7 +39,7 @@ export default function Home() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/test-db-design", {
+      const response = await fetch("/api/db-design", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
